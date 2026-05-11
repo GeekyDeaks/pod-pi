@@ -13,6 +13,8 @@ Podman image and wrapper for running the `pi` agent with:
 podman build -t localhost/pi-agent:latest .
 ```
 
+Note: the Dockerfile currently pins `@mistralai/mistralai@2.2.0` as a temporary workaround for a broken newer npm release that is missing a published install-time file (`tanstack_runner.js`).
+
 ## Run
 
 ```bash
@@ -40,5 +42,6 @@ That keeps your current user mapped 1:1 while container root stays in the rootle
 
 - `${HOME}/.pi -> /mnt/pi-config` as `ro`
 - `/mnt/pi-config` copied into writable `/home/pi/.pi` on container startup
+- any symlink targets referenced from inside `${HOME}/.pi` and located outside that tree are also bind-mounted read-only at the same absolute path, so host-managed extension symlinks continue to resolve inside the container
 - `${PWD} -> /work` as the working directory
 - writable tmpfs for `/home/pi` and `/tmp`
