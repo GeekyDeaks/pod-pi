@@ -1,9 +1,6 @@
 FROM node:22-trixie-slim
 
-ARG PI_VERSION=0.74.0
-ARG MISTRALAI_VERSION=2.2.0
-
-ENV NODE_ENV=production \
+ENV NODE_ENV=development \
     DEBIAN_FRONTEND=noninteractive \
     NPM_CONFIG_AUDIT=false \
     NPM_CONFIG_FUND=false \
@@ -33,12 +30,13 @@ RUN apt-get update \
     tini \
     tmux \
     unzip \
-    zip \
- && npm install -g --omit=dev \
-    @earendil-works/pi-coding-agent@${PI_VERSION} \
-    @mistralai/mistralai@${MISTRALAI_VERSION} \
- && npm cache clean --force \
- && apt-get clean \
+    zip
+
+RUN npm install -g \
+    @earendil-works/pi-coding-agent \
+ && npm cache clean --force
+
+RUN apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
  && mkdir -p /home/pi /work
 
