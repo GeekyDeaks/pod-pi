@@ -1,12 +1,17 @@
 # pi-podman
 
-Podman images and wrappers for running the `pi` agent in sandboxed tool environments.
+Podman image and wrappers for running the `pi` agent in a sandboxed, batteries-included tool environment.
 
-Images included:
+The single image includes:
 
-- `Dockerfile.node` / `localhost/pi-agent:latest` — Node.js 22 environment
-- `Dockerfile.golang` / `localhost/pi-agent-go:latest` — Go environment with Node/npm for `pi`
-- `Dockerfile.android` / `localhost/pi-agent-android:latest` — Android app build environment with Node 22, OpenJDK 17, Android SDK platform tools, API 35, and build-tools 35.0.0
+- Node.js 22 and npm for JavaScript/TypeScript projects and for `pi`
+- Go 1.24
+- OpenJDK 17
+- Android command line tools
+- Android SDK platform tools
+- Android API 35
+- Android build-tools 35.0.0
+- common development utilities: git, curl, jq, ripgrep, Python 3, build-essential, tmux, unzip/zip, etc.
 
 The wrappers run with:
 
@@ -18,46 +23,33 @@ The wrappers run with:
 ## Build
 
 ```bash
-./build-node
-./build-go
-./build-android
+./pod-build
 ```
 
 You can pass extra `podman build` arguments after the script name, or override the tag:
 
 ```bash
-PI_PODMAN_IMAGE=localhost/custom-go:dev ./build-go --no-cache
+PI_PODMAN_IMAGE=localhost/custom-pi-agent:dev ./pod-build --no-cache
 ```
 
 ## Run
 
-Node image:
+Open a shell in the environment:
 
 ```bash
-./pi-node
-./sh-node
+./pod
 ```
 
-Go image:
+Run a command in the environment:
 
 ```bash
-./pi-go
-./sh-go
+./pod pi
+./pod pi --help
+./pod go version
+./pod npm --version
+./pod sdkmanager --list
 ```
 
-Android image:
-
-```bash
-./pi-android
-./sh-android
-```
-
-Pass args through to `pi`:
-
-```bash
-./pi-node --help
-./pi-node chat
-```
 
 ## How the UID mapping works
 

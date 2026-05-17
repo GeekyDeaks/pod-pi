@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-exec podman build -f Dockerfile.android -t "${PI_PODMAN_IMAGE:-localhost/pi-agent-android:latest}" . "$@"

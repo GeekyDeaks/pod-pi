@@ -10,6 +10,14 @@ if [[ ! -d "$PI_DIR" ]]; then
   exit 1
 fi
 
+if [[ "$#" -eq 0 ]]; then
+  if command -v bash >/dev/null 2>&1; then
+    set -- bash
+  else
+    set -- sh
+  fi
+fi
+
 podman_args=(
   run
   --rm
