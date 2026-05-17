@@ -1,6 +1,14 @@
 # pi-podman
 
-Podman image and wrapper for running the `pi` agent with:
+Podman images and wrappers for running the `pi` agent in sandboxed tool environments.
+
+Images included:
+
+- `Dockerfile.node` / `localhost/pi-agent:latest` — Node.js 22 environment
+- `Dockerfile.golang` / `localhost/pi-agent-go:latest` — Go environment with Node/npm for `pi`
+- `Dockerfile.android` / `localhost/pi-agent-android:latest` — Android app build environment with Node 22, OpenJDK 17, Android SDK platform tools, API 35, and build-tools 35.0.0
+
+The wrappers run with:
 
 - `${HOME}/.pi` mounted read-only from the host
 - a writable in-container `${HOME}/.pi` populated from that read-only mount at startup
@@ -10,23 +18,45 @@ Podman image and wrapper for running the `pi` agent with:
 ## Build
 
 ```bash
-podman build -t localhost/pi-agent:latest .
+./build-node
+./build-go
+./build-android
 ```
 
-Note: the Dockerfile currently pins `@mistralai/mistralai@2.2.0` as a temporary workaround for a broken newer npm release that is missing a published install-time file (`tanstack_runner.js`).
+You can pass extra `podman build` arguments after the script name, or override the tag:
+
+```bash
+PI_PODMAN_IMAGE=localhost/custom-go:dev ./build-go --no-cache
+```
 
 ## Run
 
+Node image:
+
 ```bash
-chmod +x run-pi.sh
-./run-pi.sh
+./pi-node
+./sh-node
+```
+
+Go image:
+
+```bash
+./pi-go
+./sh-go
+```
+
+Android image:
+
+```bash
+./pi-android
+./sh-android
 ```
 
 Pass args through to `pi`:
 
 ```bash
-./run-pi.sh --help
-./run-pi.sh chat
+./pi-node --help
+./pi-node chat
 ```
 
 ## How the UID mapping works

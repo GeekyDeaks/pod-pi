@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec podman build -f Dockerfile.node -t "${PI_PODMAN_IMAGE:-localhost/pi-agent:latest}" . "$@"

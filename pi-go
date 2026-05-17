@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export PI_PODMAN_IMAGE="${PI_PODMAN_IMAGE:-localhost/pi-agent-go:latest}"
+exec "$(dirname "$0")/pi-node" "$@"
