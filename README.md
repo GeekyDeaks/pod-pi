@@ -6,7 +6,7 @@ The single image includes:
 
 - Node.js 22 and npm for JavaScript/TypeScript projects and for `pi`
 - Go 1.24
-- OpenJDK 17
+- OpenJDK 21
 - Android command line tools
 - Android SDK platform tools
 - Android API 35
