@@ -11,9 +11,11 @@ ENV NODE_ENV=development \
     HOME=/home/pi \
     ANDROID_HOME=/opt/android-sdk \
     ANDROID_SDK_ROOT=/opt/android-sdk \
-    ANDROID_TOOLS_URL=https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+    ANDROID_TOOLS_URL=https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip \
+    GRADLE_VERSION=8.10.2 \
+    GRADLE_HOME=/opt/gradle
 
-ENV PATH=${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator:${PATH}
+ENV PATH=${GRADLE_HOME}/bin:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator:${PATH}
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
@@ -46,17 +48,21 @@ RUN apt-get update \
  && apt-get update \
  && apt-get install -y --no-install-recommends nodejs
 
-RUN mkdir -p "${ANDROID_HOME}/cmdline-tools" \
+RUN mkdir -p "${ANDROID_HOME}/cmdline-tools" "${GRADLE_HOME}" \
  && curl -fsSL "${ANDROID_TOOLS_URL}" -o /tmp/android-commandlinetools.zip \
  && unzip -q /tmp/android-commandlinetools.zip -d /tmp/android-commandlinetools \
  && mv /tmp/android-commandlinetools/cmdline-tools "${ANDROID_HOME}/cmdline-tools/latest" \
+ && curl -fsSL "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" -o /tmp/gradle.zip \
+ && unzip -q /tmp/gradle.zip -d /opt \
+ && mv "/opt/gradle-${GRADLE_VERSION}"/* "${GRADLE_HOME}/" \
+ && rmdir "/opt/gradle-${GRADLE_VERSION}" \
  && yes | sdkmanager --licenses >/dev/null \
  && sdkmanager \
     "platform-tools" \
     "platforms;android-35" \
     "build-tools;35.0.0" \
- && chmod -R a+rwx "${ANDROID_HOME}" \
- && rm -rf /tmp/android-commandlinetools /tmp/android-commandlinetools.zip
+ && chmod -R a+rwx "${ANDROID_HOME}" "${GRADLE_HOME}" \
+ && rm -rf /tmp/android-commandlinetools /tmp/android-commandlinetools.zip /tmp/gradle.zip
 
 RUN npm install -g \
     @earendil-works/pi-coding-agent \
