@@ -13,7 +13,8 @@ ENV NODE_ENV=development \
     ANDROID_SDK_ROOT=/opt/android-sdk \
     ANDROID_TOOLS_URL=https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip \
     GRADLE_VERSION=8.10.2 \
-    GRADLE_HOME=/opt/gradle
+    GRADLE_HOME=/opt/gradle \
+    TERRAFORM_VERSION=1.15.4
 
 ENV PATH=${GRADLE_HOME}/bin:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator:${PATH}
 
@@ -63,6 +64,19 @@ RUN mkdir -p "${ANDROID_HOME}/cmdline-tools" "${GRADLE_HOME}" \
     "build-tools;35.0.0" \
  && chmod -R a+rwx "${ANDROID_HOME}" "${GRADLE_HOME}" \
  && rm -rf /tmp/android-commandlinetools /tmp/android-commandlinetools.zip /tmp/gradle.zip
+
+RUN set -eux; \
+    arch="$(dpkg --print-architecture)"; \
+    case "$arch" in \
+      amd64) terraform_arch=amd64 ;; \
+      arm64) terraform_arch=arm64 ;; \
+      *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; \
+    esac; \
+    curl -fsSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${terraform_arch}.zip" -o /tmp/terraform.zip; \
+    unzip -q /tmp/terraform.zip -d /usr/local/bin; \
+    chmod +x /usr/local/bin/terraform; \
+    terraform -version; \
+    rm -f /tmp/terraform.zip
 
 RUN npm install -g \
     @earendil-works/pi-coding-agent \
