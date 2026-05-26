@@ -31,6 +31,11 @@ RUN apt-get update \
     grep \
     jq \
     less \
+    dnsutils \
+    iproute2 \
+    iputils-ping \
+    netcat-openbsd \
+    nmap \
     openssh-client \
     patch \
     procps \
@@ -38,6 +43,9 @@ RUN apt-get update \
     python3-dev \
     build-essential \
     ripgrep \
+    tcpdump \
+    traceroute \
+    whois \
     tini \
     tmux \
     unzip \
