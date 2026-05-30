@@ -13,12 +13,15 @@ The single image includes:
 - Android build-tools 35.0.0
 - common development utilities: git, curl, jq, ripgrep, Python 3, build-essential, tmux, unzip/zip, etc.
 
-The wrappers run with:
+The default wrapper, `./pod`, runs with:
 
-- `${HOME}/.pi` mounted read-only from the host
-- a writable in-container `${HOME}/.pi` populated from that read-only mount at startup
+- a dedicated Podman volume mounted at `${HOME}/.pi` inside the container
+- that volume initialized once from the host `${HOME}/.pi` using `./pod-init`
+- no host `${HOME}/.pi` mount during normal runs, so the container pi environment can diverge from the host pi environment
 - your current user mapped to the same UID/GID inside the container
 - container root and other privileged IDs mapped through Podman's user namespace instead of to real host root
+
+The volume name defaults to `pi-agent-pi` and can be overridden with `PI_PODMAN_PI_VOLUME`.
 
 ## Build
 
@@ -34,13 +37,25 @@ PI_PODMAN_IMAGE=localhost/custom-pi-agent:dev ./pod-build --no-cache
 
 ## Run
 
-Open a shell in the environment:
+Initialize the dedicated pi volume from your host `${HOME}/.pi` once, after building the image:
+
+```bash
+./pod-init
+```
+
+Recreate it from the host later if needed. This deletes the existing volume first, so container-side pi state is replaced with a fresh copy of the host `${HOME}/.pi`:
+
+```bash
+./pod-init --force
+```
+
+Open a shell in the container environment:
 
 ```bash
 ./pod
 ```
 
-Run a command in the environment:
+Run a command in the container environment:
 
 ```bash
 ./pod pi
@@ -49,7 +64,6 @@ Run a command in the environment:
 ./pod npm --version
 ./pod sdkmanager --list
 ```
-
 
 ## How the UID mapping works
 
@@ -62,8 +76,15 @@ That keeps your current user mapped 1:1 while container root stays in the rootle
 
 ## Mounts
 
+`./pod-init` mounts:
+
 - `${HOME}/.pi -> /mnt/pi-config` as `ro`
-- `/mnt/pi-config` copied into writable `/home/pi/.pi` on container startup
-- any symlink targets referenced from inside `${HOME}/.pi` and located outside that tree are also bind-mounted read-only at the same absolute path, so host-managed extension symlinks continue to resolve inside the container
+- the Podman volume `${PI_PODMAN_PI_VOLUME:-pi-agent-pi} -> /home/pi/.pi` as `rw`
+
+It copies `${HOME}/.pi` into the volume once. Normal `./pod` runs do not mount the host `${HOME}/.pi`.
+
+`./pod` mounts:
+
+- the Podman volume `${PI_PODMAN_PI_VOLUME:-pi-agent-pi} -> /home/pi/.pi` as `rw`
 - `${PWD} -> /work` as the working directory
 - writable tmpfs for `/home/pi` and `/tmp`

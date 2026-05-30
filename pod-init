@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+IMAGE="${PI_PODMAN_IMAGE:-localhost/pi-agent:latest}"
+PI_DIR="${HOME}/.pi"
+PI_VOLUME="${PI_PODMAN_PI_VOLUME:-pi-agent-pi}"
+FORCE=0
+
+if [[ "${1:-}" == "--force" ]]; then
+  FORCE=1
+  shift
+fi
+
+if [[ "$#" -ne 0 ]]; then
+  echo "usage: $0 [--force]" >&2
+  exit 2
+fi
+
+if [[ ! -d "$PI_DIR" ]]; then
+  echo "missing ${PI_DIR}" >&2
+  exit 1
+fi
+
+if podman volume exists "$PI_VOLUME"; then
+  if [[ "$FORCE" -ne 1 ]]; then
+    echo "podman volume ${PI_VOLUME} already exists" >&2
+    echo "use $0 --force to delete and recreate it from ${PI_DIR}" >&2
+    exit 1
+  fi
+  podman volume rm "$PI_VOLUME" >/dev/null
+fi
+
+podman volume create "$PI_VOLUME" >/dev/null
+
+podman run --rm \
+  --userns=keep-id \
+  --user "$(id -u):$(id -g)" \
+  --security-opt=no-new-privileges \
+  --cap-drop=ALL \
+  --tmpfs /tmp:rw,exec,nosuid,nodev,size=1g \
+  -e HOME=/home/pi \
+  -v "${PI_DIR}:/mnt/pi-config:ro,z" \
+  -v "${PI_VOLUME}:/home/pi/.pi:rw,z" \
+  --entrypoint /bin/bash \
+  "$IMAGE" \
+  -lc 'mkdir -p "$HOME/.pi"; cp -a /mnt/pi-config/. "$HOME/.pi/"'
+
+echo "initialized podman volume ${PI_VOLUME} from ${PI_DIR}"
