@@ -35,6 +35,12 @@ You can pass extra `podman build` arguments after the script name, or override t
 PI_PODMAN_IMAGE=localhost/custom-pi-agent:dev ./pod-build --no-cache
 ```
 
+Tool versions are pinned/configured in `Dockerfile` `ENV` values, including `PI_CODING_AGENT_VERSION`. To update pi, change that value and rebuild, preferably without cache:
+
+```bash
+./pod-build --pull --no-cache
+```
+
 ## Run
 
 Initialize the dedicated pi volume from your host `${HOME}/.pi` once, after building the image:

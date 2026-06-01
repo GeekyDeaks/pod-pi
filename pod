@@ -5,6 +5,8 @@ IMAGE="${PI_PODMAN_IMAGE:-localhost/pi-agent:latest}"
 PI_VOLUME="${PI_PODMAN_PI_VOLUME:-pi-agent-pi}"
 WORKDIR="${PWD}"
 
+PI_SKIP_VERSION_CHECK=true
+
 if ! podman volume exists "$PI_VOLUME"; then
   echo "missing podman volume ${PI_VOLUME}" >&2
   echo "run ./pod-init to create it from ${HOME}/.pi" >&2

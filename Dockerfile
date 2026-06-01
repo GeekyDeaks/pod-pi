@@ -14,7 +14,8 @@ ENV NODE_ENV=development \
     ANDROID_TOOLS_URL=https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip \
     GRADLE_VERSION=8.10.2 \
     GRADLE_HOME=/opt/gradle \
-    TERRAFORM_VERSION=1.15.4
+    TERRAFORM_VERSION=1.15.4 \
+    PI_CODING_AGENT_VERSION=latest
 
 ENV PATH=${GRADLE_HOME}/bin:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator:${PATH}
 
@@ -87,7 +88,7 @@ RUN set -eux; \
     rm -f /tmp/terraform.zip
 
 RUN npm install -g \
-    @earendil-works/pi-coding-agent \
+    "@earendil-works/pi-coding-agent@${PI_CODING_AGENT_VERSION}" \
  && npm cache clean --force
 
 RUN apt-get clean \
