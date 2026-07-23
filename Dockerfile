@@ -158,6 +158,7 @@ RUN apt-get clean \
  && mkdir -p /home/pi /work /go \
  && chmod -R a+rwx /go
 
+COPY image-skills /usr/local/share/pi-agent/skills
 COPY entrypoint.sh /usr/local/bin/pi-entrypoint
 RUN chmod +x /usr/local/bin/pi-entrypoint
 

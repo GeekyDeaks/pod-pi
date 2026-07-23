@@ -16,6 +16,7 @@ The single image includes:
 - web lookup tools: ddgr, w3m, html2text, and Python requests/httpx
 - CSV/data wrangling tools: Miller (`mlr`), csvkit, SQLite, and Python pandas/OpenPyXL
 - deep search/extraction tools: ripgrep-all (`rga`), fd, bat, universal-ctags, docx2txt, antiword/catdoc, odt2txt, unrtf, DjVu tools, 7zip, and unrar-free
+- a bundled `container-tools` pi skill documenting installed tools and common extraction/search workflows
 
 The default wrapper, `./pod`, runs with:
 
