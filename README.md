@@ -12,6 +12,10 @@ The single image includes:
 - Android API 35
 - Android build-tools 35.0.0
 - common development utilities: git, curl, jq, ripgrep, Python 3, build-essential, tmux, unzip/zip, etc.
+- document/media inspection tools: ImageMagick, ExifTool, FFmpeg, MediaInfo, Poppler PDF tools, qpdf, Tesseract OCR, Pandoc, Graphviz, SQLite, XMLStarlet, zstd/xz/bzip2, and Python libraries for Pillow/OpenCV/OpenPyXL/BeautifulSoup/lxml/YAML
+- web lookup tools: ddgr, w3m, html2text, and Python requests/httpx
+- CSV/data wrangling tools: Miller (`mlr`), csvkit, SQLite, and Python pandas/OpenPyXL
+- deep search/extraction tools: ripgrep-all (`rga`), fd, bat, universal-ctags, docx2txt, antiword/catdoc, odt2txt, unrtf, DjVu tools, 7zip, and unrar-free
 
 The default wrapper, `./pod`, runs with:
 

@@ -15,48 +15,96 @@ ENV NODE_ENV=development \
     GRADLE_VERSION=8.10.2 \
     GRADLE_HOME=/opt/gradle \
     TERRAFORM_VERSION=1.15.4 \
+    RGA_VERSION=0.10.10 \
     PI_CODING_AGENT_VERSION=latest
 
 ENV PATH=${GRADLE_HOME}/bin:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator:${PATH}
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
+    antiword \
     bash \
+    bat \
+    build-essential \
+    bzip2 \
     ca-certificates \
+    catdoc \
     coreutils \
+    csvkit \
     curl \
+    ddgr \
+    djvulibre-bin \
+    dnsutils \
+    docx2txt \
+    fd-find \
+    ffmpeg \
     file \
     findutils \
     git \
     gnupg \
+    graphviz \
     grep \
-    jq \
-    less \
-    dnsutils \
+    html2text \
+    imagemagick \
     iproute2 \
     iputils-ping \
+    jq \
+    less \
+    libimage-exiftool-perl \
+    mediainfo \
+    miller \
     netcat-openbsd \
     nmap \
+    odt2txt \
+    openjdk-21-jdk-headless \
     openssh-client \
+    pandoc \
     patch \
+    poppler-utils \
     procps \
     python3 \
+    python3-bs4 \
     python3-dev \
-    build-essential \
+    python3-lxml \
+    python3-numpy \
+    python3-opencv \
+    python3-openpyxl \
+    python3-pandas \
+    python3-pil \
+    python3-pip \
+    python3-requests \
+    python3-httpx \
+    python3-venv \
+    python3-yaml \
+    qpdf \
     ripgrep \
+    sqlite3 \
     tcpdump \
-    traceroute \
-    whois \
+    tesseract-ocr \
+    tesseract-ocr-eng \
     tini \
     tmux \
+    universal-ctags \
+    traceroute \
+    tree \
+    unrar-free \
+    unrtf \
     unzip \
+    whois \
+    w3m \
+    xmlstarlet \
+    xz-utils \
     zip \
-    openjdk-21-jdk-headless \
+    zstd \
+    7zip \
  && install -d -m 0755 /etc/apt/keyrings \
  && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
  && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list \
  && apt-get update \
  && apt-get install -y --no-install-recommends nodejs
+
+RUN ln -sf /usr/bin/fdfind /usr/local/bin/fd \
+ && ln -sf /usr/bin/batcat /usr/local/bin/bat
 
 RUN mkdir -p "${ANDROID_HOME}/cmdline-tools" "${GRADLE_HOME}" \
  && curl -fsSL "${ANDROID_TOOLS_URL}" -o /tmp/android-commandlinetools.zip \
@@ -86,6 +134,20 @@ RUN set -eux; \
     chmod +x /usr/local/bin/terraform; \
     terraform -version; \
     rm -f /tmp/terraform.zip
+
+RUN set -eux; \
+    arch="$(dpkg --print-architecture)"; \
+    case "$arch" in \
+      amd64) rga_target=x86_64-unknown-linux-musl ;; \
+      arm64) rga_target=aarch64-unknown-linux-gnu ;; \
+      *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; \
+    esac; \
+    rga_dir="ripgrep_all-v${RGA_VERSION}-${rga_target}"; \
+    curl -fsSL "https://github.com/phiresky/ripgrep-all/releases/download/v${RGA_VERSION}/${rga_dir}.tar.gz" -o /tmp/ripgrep-all.tar.gz; \
+    tar -xzf /tmp/ripgrep-all.tar.gz -C /tmp; \
+    install -m 0755 "/tmp/${rga_dir}/rga" "/tmp/${rga_dir}/rga-preproc" /usr/local/bin/; \
+    rga --version; \
+    rm -rf /tmp/ripgrep-all.tar.gz "/tmp/${rga_dir}"
 
 RUN npm install -g \
     "@earendil-works/pi-coding-agent@${PI_CODING_AGENT_VERSION}" \
