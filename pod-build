@@ -12,12 +12,12 @@ fi
 
 case "$TARGET" in
   base|go|adk)
-    exec podman build -f Dockerfile --target "$TARGET" -t "${IMAGE_PREFIX}:${TARGET}" . "$@"
+    exec ionice -c3 podman build -f Dockerfile --target "$TARGET" -t "${IMAGE_PREFIX}:${TARGET}" . "$@"
     ;;
   all)
-    podman build -f Dockerfile --target base -t "${IMAGE_PREFIX}:base" . "$@"
-    podman build -f Dockerfile --target go -t "${IMAGE_PREFIX}:go" . "$@"
-    podman build -f Dockerfile --target adk -t "${IMAGE_PREFIX}:adk" . "$@"
+    ionice -c3 podman build -f Dockerfile --target base -t "${IMAGE_PREFIX}:base" . "$@"
+    ionice -c3 podman build -f Dockerfile --target go -t "${IMAGE_PREFIX}:go" . "$@"
+    ionice -c3 podman build -f Dockerfile --target adk -t "${IMAGE_PREFIX}:adk" . "$@"
     ;;
   *)
     echo "usage: $0 [base|go|adk|all] [podman build args...]" >&2
