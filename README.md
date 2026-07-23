@@ -2,21 +2,22 @@
 
 Podman image and wrappers for running the `pi` agent in a sandboxed, batteries-included tool environment.
 
-The single image includes:
+The images are split by toolchain:
 
-- Node.js 22 and npm for JavaScript/TypeScript projects and for `pi`
-- Go 1.24
-- OpenJDK 21
-- Android command line tools
-- Android SDK platform tools
-- Android API 35
-- Android build-tools 35.0.0
-- common development utilities: git, curl, jq, ripgrep, Python 3, build-essential, tmux, unzip/zip, etc.
-- document/media inspection tools: ImageMagick, ExifTool, FFmpeg, MediaInfo, Poppler PDF tools, qpdf, Tesseract OCR, Pandoc, Graphviz, SQLite, XMLStarlet, zstd/xz/bzip2, and Python libraries for Pillow/OpenCV/OpenPyXL/BeautifulSoup/lxml/YAML
-- web lookup tools: ddgr, w3m, html2text, and Python requests/httpx
-- CSV/data wrangling tools: Miller (`mlr`), csvkit, SQLite, and Python pandas/OpenPyXL
-- deep search/extraction tools: ripgrep-all (`rga`), fd, bat, universal-ctags, docx2txt, antiword/catdoc, odt2txt, unrtf, DjVu tools, 7zip, and unrar-free
-- a bundled `container-tools` pi skill documenting installed tools and common extraction/search workflows
+- `localhost/pi-agent:base`, used by `./pod`
+  - Node.js 22 and npm for JavaScript/TypeScript projects and for `pi`
+  - common development utilities: git, curl, jq, ripgrep, Python 3, tmux, unzip/zip, etc.
+  - document/media inspection tools: ImageMagick, ExifTool, FFmpeg, MediaInfo, Poppler PDF tools, qpdf, Tesseract OCR, Pandoc, Graphviz, SQLite, XMLStarlet, zstd/xz/bzip2, and Python libraries for Pillow/OpenCV/OpenPyXL/BeautifulSoup/lxml/YAML
+  - web lookup tools: ddgr, w3m, html2text, and Python requests/httpx
+  - CSV/data wrangling tools: Miller (`mlr`), csvkit, SQLite, and Python pandas/OpenPyXL
+  - deep search/extraction tools: ripgrep-all (`rga`), fd, bat, universal-ctags, docx2txt, antiword/catdoc, odt2txt, unrtf, DjVu tools, 7zip, and unrar-free
+  - a bundled `container-tools` pi skill documenting installed tools and common extraction/search workflows
+- `localhost/pi-agent:go`, used by `./pod-go`
+  - everything in `base`
+  - Go 1.24 and build-essential
+- `localhost/pi-agent:adk`, used by `./pod-adk`
+  - everything in `base`
+  - OpenJDK 21, Gradle, Android command line tools, Android SDK platform tools, Android API 35, and Android build-tools 35.0.0
 
 The default wrapper, `./pod`, runs with:
 
@@ -31,19 +32,22 @@ The volume name defaults to `pi-agent-pi` and can be overridden with `PI_PODMAN_
 ## Build
 
 ```bash
-./pod-build
+./pod-build          # builds localhost/pi-agent:base
+./pod-build go       # builds localhost/pi-agent:go
+./pod-build adk      # builds localhost/pi-agent:adk
+./pod-build all      # builds all images
 ```
 
-You can pass extra `podman build` arguments after the script name, or override the tag:
+You can pass extra `podman build` arguments after the image target, or override the image prefix:
 
 ```bash
-PI_PODMAN_IMAGE=localhost/custom-pi-agent:dev ./pod-build --no-cache
+PI_PODMAN_IMAGE_PREFIX=localhost/custom-pi-agent ./pod-build all --no-cache
 ```
 
 Tool versions are pinned/configured in `Dockerfile` `ENV` values, including `PI_CODING_AGENT_VERSION`. To update pi, change that value and rebuild, preferably without cache:
 
 ```bash
-./pod-build --pull --no-cache
+./pod-build all --pull --no-cache
 ```
 
 ## Run
@@ -71,9 +75,9 @@ Run a command in the container environment:
 ```bash
 ./pod pi
 ./pod pi --help
-./pod go version
 ./pod npm --version
-./pod sdkmanager --list
+./pod-go go version
+./pod-adk sdkmanager --list
 ```
 
 ## How the UID mapping works

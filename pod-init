@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-IMAGE="${PI_PODMAN_IMAGE:-localhost/pi-agent:latest}"
+IMAGE="${PI_PODMAN_IMAGE:-localhost/pi-agent:base}"
 PI_DIR="${HOME}/.pi"
 PI_VOLUME="${PI_PODMAN_PI_VOLUME:-pi-agent-pi}"
 FORCE=0

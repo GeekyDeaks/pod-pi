@@ -1,4 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-exec podman build -f Dockerfile -t "${PI_PODMAN_IMAGE:-localhost/pi-agent:latest}" . "$@"
+IMAGE_PREFIX="${PI_PODMAN_IMAGE_PREFIX:-localhost/pi-agent}"
+TARGET="${1:-base}"
+
+if [[ "$TARGET" == -* ]]; then
+  TARGET=base
+else
+  shift || true
+fi
+
+case "$TARGET" in
+  base|go|adk)
+    exec podman build -f Dockerfile --target "$TARGET" -t "${IMAGE_PREFIX}:${TARGET}" . "$@"
+    ;;
+  all)
+    podman build -f Dockerfile --target base -t "${IMAGE_PREFIX}:base" . "$@"
+    podman build -f Dockerfile --target go -t "${IMAGE_PREFIX}:go" . "$@"
+    podman build -f Dockerfile --target adk -t "${IMAGE_PREFIX}:adk" . "$@"
+    ;;
+  *)
+    echo "usage: $0 [base|go|adk|all] [podman build args...]" >&2
+    echo "set PI_PODMAN_IMAGE_PREFIX to override the image prefix; default: localhost/pi-agent" >&2
+    exit 2
+    ;;
+esac

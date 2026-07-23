@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PI_PODMAN_IMAGE="${PI_PODMAN_IMAGE:-localhost/pi-agent:base}" exec "$(dirname "$0")/pod" pi "$@"
