@@ -55,6 +55,7 @@ RUN apt-get update \
     patch \
     poppler-utils \
     procps \
+    postgresql-client \
     python3 \
     python3-bs4 \
     python3-lxml \

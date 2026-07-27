@@ -37,6 +37,9 @@ bat path                              # readable preview; Debian symlink provide
 jq . data.json
 xmlstarlet fo file.xml
 sqlite3 database.db '.tables'
+psql "$DATABASE_URL"                    # PostgreSQL CLI client
+pg_dump "$DATABASE_URL" > dump.sql       # PostgreSQL database dump
+pg_restore --help                        # PostgreSQL restore utility
 tree -a -L 3
 ```
 
