@@ -103,3 +103,5 @@ It copies `${HOME}/.pi` into the volume once. Normal `./pod` runs do not mount t
 - the Podman volume `${PI_PODMAN_PI_VOLUME:-pi-agent-pi} -> /home/pi/.pi` as `rw`
 - `${PWD} -> /work` as the working directory
 - writable tmpfs for `/home/pi` and `/tmp`
+
+If `${PWD}/.env` exists, `./pod` also passes it to Podman with `--env-file`. The wrapper still explicitly sets `HOME=/home/pi` after loading the env file, so project `.env` files cannot override the container home directory.
