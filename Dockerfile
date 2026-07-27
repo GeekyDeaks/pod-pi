@@ -12,6 +12,7 @@ ENV NODE_ENV=development \
     HOME=/home/pi \
     TERRAFORM_VERSION=1.15.4 \
     RGA_VERSION=0.10.10 \
+    LIGHTDASH_CLI_VERSION=latest \
     PI_CODING_AGENT_VERSION=latest
 
 RUN apt-get update \
@@ -128,6 +129,7 @@ RUN set -eux; \
 
 RUN npm install -g \
     "@earendil-works/pi-coding-agent@${PI_CODING_AGENT_VERSION}" \
+    "@lightdash/cli@${LIGHTDASH_CLI_VERSION}" \
  && npm cache clean --force
 
 RUN rm -rf /tmp/* /var/tmp/* \

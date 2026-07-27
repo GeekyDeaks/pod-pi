@@ -8,6 +8,16 @@ compatibility: pi-podman image with Debian-based CLI tools installed.
 
 Prefer these purpose-built tools before writing ad-hoc scripts. Check availability with `command -v <tool>` if unsure.
 
+For web lookup tasks, do not start by writing Python. First try the dedicated CLI tools in the Web lookup section (`ddgr`, `w3m`, `curl | html2text`). Use Python only as a fallback when the CLI tools cannot retrieve or parse the needed information.
+
+## Development and project tools
+
+```bash
+lightdash --help                     # Lightdash CLI for Lightdash/dbt project workflows
+npm --version                        # JavaScript/TypeScript package tooling
+node --version
+```
+
 ## File and code search
 
 ```bash
@@ -57,10 +67,22 @@ ffmpeg -i input.mp4 output.wav
 
 ## Web lookup and page extraction
 
+Use this order for web lookup:
+
+1. Search with `ddgr`.
+2. Read pages with `w3m -dump`.
+3. If needed, fetch HTML with `curl` and convert with `html2text`.
+4. Only use Python for complex parsing, retries, pagination, or when the CLI tools fail.
+
 ```bash
 ddgr "search query"
 w3m -dump https://example.com
 curl -fsSL https://example.com | html2text
+```
+
+Python fallback only:
+
+```bash
 python3 - <<'PY'
 import requests
 from bs4 import BeautifulSoup

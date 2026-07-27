@@ -6,7 +6,7 @@ The images are split by toolchain:
 
 - `localhost/pi-agent:base`, used by `./pod`
   - Node.js 22 and npm for JavaScript/TypeScript projects and for `pi`
-  - common development utilities: git, curl, jq, ripgrep, Python 3, tmux, unzip/zip, etc.
+  - common development utilities: git, curl, jq, ripgrep, Python 3, tmux, unzip/zip, Lightdash CLI, etc.
   - document/media inspection tools: ImageMagick, ExifTool, FFmpeg, MediaInfo, Poppler PDF tools, qpdf, Tesseract OCR, Pandoc, Graphviz, SQLite, XMLStarlet, zstd/xz/bzip2, and Python libraries for Pillow/OpenCV/OpenPyXL/BeautifulSoup/lxml/YAML
   - web lookup tools: ddgr, w3m, html2text, and Python requests/httpx
   - CSV/data wrangling tools: Miller (`mlr`), csvkit, SQLite, and Python pandas/OpenPyXL
@@ -44,7 +44,7 @@ You can pass extra `podman build` arguments after the image target, or override 
 PI_PODMAN_IMAGE_PREFIX=localhost/custom-pi-agent ./pod-build all --no-cache
 ```
 
-Tool versions are pinned/configured in `Dockerfile` `ENV` values, including `PI_CODING_AGENT_VERSION`. To update pi, change that value and rebuild, preferably without cache:
+Tool versions are pinned/configured in `Dockerfile` `ENV` values, including `PI_CODING_AGENT_VERSION` and `LIGHTDASH_CLI_VERSION`. To update pi or Lightdash CLI, change the relevant value and rebuild, preferably without cache:
 
 ```bash
 ./pod-build all --pull --no-cache
