@@ -12,6 +12,11 @@ if [[ -d /usr/local/share/pi-agent/skills ]]; then
   cp -a /usr/local/share/pi-agent/skills/. "$HOME/.pi/agent/skills/"
 fi
 
+if [[ -d /usr/local/share/pi-agent/extensions ]]; then
+  mkdir -p "$HOME/.pi/agent/extensions"
+  cp -a /usr/local/share/pi-agent/extensions/. "$HOME/.pi/agent/extensions/"
+fi
+
 if [[ "$#" -eq 0 ]]; then
   set -- pi
 elif [[ "$1" == -* ]]; then

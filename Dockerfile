@@ -6,6 +6,7 @@ FROM docker.io/library/debian:${DEBIAN_VERSION} AS base
 ENV NODE_ENV=development \
     DEBIAN_FRONTEND=noninteractive \
     NPM_CONFIG_AUDIT=false \
+    NPM_CONFIG_CACHE=/tmp/npm-cache \
     NPM_CONFIG_FUND=false \
     NPM_CONFIG_LOGLEVEL=warn \
     NPM_CONFIG_UPDATE_NOTIFIER=false \
@@ -131,13 +132,15 @@ RUN set -eux; \
 RUN npm install -g \
     "@earendil-works/pi-coding-agent@${PI_CODING_AGENT_VERSION}" \
     "@lightdash/cli@${LIGHTDASH_CLI_VERSION}" \
- && npm cache clean --force
+ && npm cache clean --force \
+ && rm -rf /home/pi/.npm
 
 RUN rm -rf /tmp/* /var/tmp/* \
  && mkdir -p /home/pi /work \
  && chmod a+rwx /home/pi /work
 
 COPY image-skills /usr/local/share/pi-agent/skills
+COPY image-extensions /usr/local/share/pi-agent/extensions
 COPY entrypoint.sh /usr/local/bin/pi-entrypoint
 RUN chmod +x /usr/local/bin/pi-entrypoint
 
