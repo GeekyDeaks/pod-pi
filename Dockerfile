@@ -139,8 +139,7 @@ RUN rm -rf /tmp/* /var/tmp/* \
  && mkdir -p /home/pi /work \
  && chmod a+rwx /home/pi /work
 
-COPY image-skills /usr/local/share/pi-agent/skills
-COPY image-extensions /usr/local/share/pi-agent/extensions
+COPY pi-agent /usr/local/share/pi-agent
 COPY entrypoint.sh /usr/local/bin/pi-entrypoint
 RUN chmod +x /usr/local/bin/pi-entrypoint
 
