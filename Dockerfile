@@ -14,7 +14,10 @@ ENV NODE_ENV=development \
     TERRAFORM_VERSION=1.15.4 \
     RGA_VERSION=0.10.10 \
     LIGHTDASH_CLI_VERSION=latest \
-    PI_CODING_AGENT_VERSION=latest
+    PI_CODING_AGENT_VERSION=latest \
+    PLAYWRIGHT_VERSION=1.62.1 \
+    PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright \
+    NODE_PATH=/usr/lib/node_modules
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
@@ -132,8 +135,10 @@ RUN set -eux; \
 RUN npm install -g \
     "@earendil-works/pi-coding-agent@${PI_CODING_AGENT_VERSION}" \
     "@lightdash/cli@${LIGHTDASH_CLI_VERSION}" \
- && npm cache clean --force \
- && rm -rf /home/pi/.npm
+    "playwright@${PLAYWRIGHT_VERSION}" \
+ && playwright install --with-deps chromium \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* /home/pi/.npm /tmp/npm-cache
 
 RUN rm -rf /tmp/* /var/tmp/* \
  && mkdir -p /home/pi /work \

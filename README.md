@@ -9,6 +9,7 @@ The images are split by toolchain:
   - common development utilities: git, curl, jq, ripgrep, Python 3, tmux, unzip/zip, Lightdash CLI, etc.
   - document/media inspection tools: ImageMagick, ExifTool, FFmpeg, MediaInfo, Poppler PDF tools, qpdf, Tesseract OCR, Pandoc, Graphviz, SQLite, XMLStarlet, zstd/xz/bzip2, and Python libraries for Pillow/OpenCV/OpenPyXL/BeautifulSoup/lxml/YAML
   - web lookup tools: ddgr, w3m, html2text, and Python requests/httpx
+  - rendered-page analysis: Playwright with bundled headless Chromium for JavaScript pages, DOM inspection, interaction, and screenshots
   - CSV/data wrangling tools: Miller (`mlr`), csvkit, SQLite, PostgreSQL client tools, and Python pandas/OpenPyXL
   - deep search/extraction tools: ripgrep-all (`rga`), fd, bat, universal-ctags, docx2txt, antiword/catdoc, odt2txt, unrtf, DjVu tools, 7zip, and unrar-free
   - a bundled `container-tools` pi skill documenting installed tools and common extraction/search workflows
@@ -44,7 +45,7 @@ You can pass extra `podman build` arguments after the image target, or override 
 PI_PODMAN_IMAGE_PREFIX=localhost/custom-pi-agent ./pod-build all --no-cache
 ```
 
-Tool versions are pinned/configured in `Dockerfile` `ENV` values, including `PI_CODING_AGENT_VERSION` and `LIGHTDASH_CLI_VERSION`. To update pi or Lightdash CLI, change the relevant value and rebuild, preferably without cache:
+Tool versions are pinned/configured in `Dockerfile` `ENV` values, including `PI_CODING_AGENT_VERSION`, `LIGHTDASH_CLI_VERSION`, and `PLAYWRIGHT_VERSION`. To update pi, Lightdash CLI, or Playwright, change the relevant value and rebuild, preferably without cache:
 
 ```bash
 ./pod-build all --pull --no-cache
