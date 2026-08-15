@@ -9,7 +9,7 @@ The images are split by toolchain:
   - common development utilities: git, curl, jq, ripgrep, Python 3, tmux, unzip/zip, Lightdash CLI, etc.
   - document/media inspection tools: ImageMagick, ExifTool, FFmpeg, MediaInfo, Poppler PDF tools, qpdf, Tesseract OCR, Pandoc, Graphviz, SQLite, XMLStarlet, zstd/xz/bzip2, and Python libraries for Pillow/OpenCV/OpenPyXL/BeautifulSoup/lxml/YAML
   - web lookup tools: ddgr, w3m, html2text, and Python requests/httpx
-  - rendered-page analysis: Playwright with bundled headless Chromium for JavaScript pages, DOM inspection, interaction, and screenshots
+  - rendered-page analysis: an auto-loaded `rendered_page` extension backed by Playwright and bundled headless Chromium for JavaScript pages, post-render DOM inspection, and screenshots
   - CSV/data wrangling tools: Miller (`mlr`), csvkit, SQLite, PostgreSQL client tools, and Python pandas/OpenPyXL
   - deep search/extraction tools: ripgrep-all (`rga`), fd, bat, universal-ctags, docx2txt, antiword/catdoc, odt2txt, unrtf, DjVu tools, 7zip, and unrar-free
   - a bundled `container-tools` pi skill documenting installed tools and common extraction/search workflows
