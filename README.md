@@ -33,6 +33,24 @@ The repository includes `.devcontainer/devcontainer.json` as a template to copy 
 
 Configure the VS Code Dev Containers extension to use Podman, then run **Dev Containers: Reopen in Container** from the consuming project. The project is mounted at `/work`; the persistent container home is mounted at `/home/pi`.
 
+On Windows, initialize a Podman machine once, start it, and confirm that the client can connect:
+
+```powershell
+podman machine init
+podman machine start
+podman info
+```
+
+If a machine already exists, omit `podman machine init`. Configure Podman as the container command in your VS Code user settings:
+
+```json
+{
+  "dev.containers.dockerPath": "podman"
+}
+```
+
+Run `pod-build.ps1` and `pod-init.ps1` with the same Podman connection that VS Code uses so the extension can see the prepared image and volume.
+
 The container and VS Code server run as the named `pi` user. Podman's `keep-id` user namespace maps the invoking user to UID/GID 1000 inside the container, preserving host ownership of files created in the workspace. `updateRemoteUserUID` is disabled because the namespace performs this mapping without changing the image user.
 
 ## Build
