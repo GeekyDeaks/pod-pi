@@ -51,13 +51,19 @@ Tool versions are pinned/configured in `Dockerfile` `ENV` values, including `PI_
 
 ## Run
 
-After building the base image, create the dedicated Pi volume and merge the bundled agent assets into it:
+After building the base image, create the dedicated Pi volume, merge the bundled agent assets into it, and install the pinned `@tintinweb/pi-subagents` package:
 
 ```bash
 ./pod-init
 ```
 
-Run `./pod-init` again after rebuilding to update those assets. Initialization is merge-only: it overwrites matching bundled files but retains other files in `.pi/agent` and preserves all other Pi state. To start completely fresh, remove the volume and initialize it again:
+The package version defaults to `0.19.0` and can be overridden when initializing:
+
+```bash
+PI_SUBAGENTS_VERSION=0.19.0 ./pod-init
+```
+
+Run `./pod-init` again after rebuilding to update the assets and reconcile the package installation. Initialization overwrites matching bundled files but retains other files in `.pi/agent` and preserves all other Pi state. To start completely fresh, remove the volume and initialize it again:
 
 ```bash
 podman volume rm pi-agent-pi
