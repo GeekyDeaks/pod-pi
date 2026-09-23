@@ -153,7 +153,7 @@ COPY pi-agent /usr/local/share/pi-agent
 WORKDIR /work
 USER pi
 ENTRYPOINT ["tini", "--"]
-CMD ["pi"]
+CMD ["bash"]
 
 FROM ${GO_IMAGE} AS go-toolchain
 

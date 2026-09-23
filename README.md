@@ -85,11 +85,16 @@ Open a shell in the container environment:
 ./pod
 ```
 
-Run a command in the container environment:
+Run Pi directly, forwarding any arguments:
 
 ```bash
-./pod pi
-./pod pi --help
+./pi
+./pi --help
+```
+
+Run another command in the container environment:
+
+```bash
 ./pod npm --version
 ./pod-go go version
 ./pod-adk sdkmanager --list
