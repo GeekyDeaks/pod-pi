@@ -1,0 +1,16 @@
+{
+  "name": "Pi Agent",
+  "image": "localhost/pi-agent:base",
+  "containerUser": "pi",
+  "remoteUser": "pi",
+  "updateRemoteUserUID": false,
+  "workspaceFolder": "/work",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/work,type=bind",
+  "mounts": [
+    "source=pi-agent-state,target=/home/pi/.pi,type=volume"
+  ],
+  "runArgs": [
+    "--userns=keep-id:uid=1000,gid=1000"
+  ],
+  "overrideCommand": true
+}

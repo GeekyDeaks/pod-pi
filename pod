@@ -2,7 +2,7 @@
 set -euo pipefail
 
 IMAGE="${PI_PODMAN_IMAGE:-localhost/pi-agent:base}"
-PI_VOLUME="pi-agent-pi"
+PI_VOLUME="pi-agent-state"
 WORKDIR="${PWD}"
 
 PI_SKIP_VERSION_CHECK=true

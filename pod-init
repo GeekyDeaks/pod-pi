@@ -2,7 +2,7 @@
 set -euo pipefail
 
 IMAGE="${PI_PODMAN_IMAGE:-localhost/pi-agent:base}"
-PI_VOLUME="pi-agent-pi"
+PI_VOLUME="pi-agent-state"
 PI_SUBAGENTS_VERSION="${PI_SUBAGENTS_VERSION:-0.19.0}"
 
 if [[ "$#" -ne 0 ]]; then
