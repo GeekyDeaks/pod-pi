@@ -1,6 +1,8 @@
 ARG DEBIAN_VERSION=trixie-slim
 ARG GO_IMAGE=docker.io/library/golang:1.24-trixie
 
+FROM ${GO_IMAGE} AS go-toolchain
+
 FROM docker.io/library/debian:${DEBIAN_VERSION} AS base
 
 ENV NODE_ENV=development \
@@ -19,13 +21,17 @@ ENV NODE_ENV=development \
     PI_CODING_AGENT_VERSION=latest \
     PLAYWRIGHT_VERSION=1.62.1 \
     PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright \
-    NODE_PATH=/usr/lib/node_modules
+    NODE_PATH=/usr/lib/node_modules \
+    GOPATH=/go \
+    GOCACHE=/tmp/go-build \
+    PATH=/usr/local/go/bin:${PATH}
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
     antiword \
     bash \
     bat \
+    build-essential \
     bzip2 \
     ca-certificates \
     catdoc \
@@ -104,6 +110,8 @@ RUN apt-get update \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
+COPY --from=go-toolchain /usr/local/go /usr/local/go
+
 RUN ln -sf /usr/bin/fdfind /usr/local/bin/fd \
  && ln -sf /usr/bin/batcat /usr/local/bin/bat
 
@@ -145,8 +153,8 @@ RUN npm install -g \
 RUN rm -rf /tmp/* /var/tmp/* \
  && groupadd --gid 1000 pi \
  && useradd --uid 1000 --gid 1000 --create-home --shell /bin/bash pi \
- && mkdir -p /work \
- && chown -R pi:pi /home/pi /work
+ && mkdir -p /go /work \
+ && chown -R pi:pi /go /home/pi /work
 
 COPY pi-agent /usr/local/share/pi-agent
 
@@ -154,22 +162,6 @@ WORKDIR /work
 USER pi
 ENTRYPOINT ["tini", "--"]
 CMD ["bash"]
-
-FROM ${GO_IMAGE} AS go-toolchain
-
-FROM base AS go
-USER root
-ENV GOPATH=/go \
-    GOCACHE=/tmp/go-build \
-    PATH=/usr/local/go/bin:${PATH}
-COPY --from=go-toolchain /usr/local/go /usr/local/go
-RUN apt-get update \
- && apt-get install -y --no-install-recommends build-essential \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/* \
- && mkdir -p /go \
- && chown pi:pi /go
-USER pi
 
 FROM base AS adk
 USER root

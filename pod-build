@@ -11,16 +11,15 @@ else
 fi
 
 case "$TARGET" in
-  base|go|adk)
+  base|adk)
     exec ionice -c3 podman build -f Dockerfile --target "$TARGET" -t "${IMAGE_PREFIX}:${TARGET}" . "$@"
     ;;
   all)
     ionice -c3 podman build -f Dockerfile --target base -t "${IMAGE_PREFIX}:base" . "$@"
-    ionice -c3 podman build -f Dockerfile --target go -t "${IMAGE_PREFIX}:go" . "$@"
     ionice -c3 podman build -f Dockerfile --target adk -t "${IMAGE_PREFIX}:adk" . "$@"
     ;;
   *)
-    echo "usage: $0 [base|go|adk|all] [podman build args...]" >&2
+    echo "usage: $0 [base|adk|all] [podman build args...]" >&2
     echo "set PI_PODMAN_IMAGE_PREFIX to override the image prefix; default: localhost/pi-agent" >&2
     exit 2
     ;;

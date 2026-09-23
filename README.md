@@ -6,6 +6,7 @@ The images are split by toolchain:
 
 - `localhost/pi-agent:base`, used by `./pod`
   - Node.js 22 and npm for JavaScript/TypeScript projects and for `pi`
+  - Go 1.24 and build-essential
   - common development utilities: git, curl, jq, ripgrep, Python 3, tmux, unzip/zip, Lightdash CLI, etc.
   - document/media inspection tools: ImageMagick, ExifTool, FFmpeg, MediaInfo, Poppler PDF tools, qpdf, Tesseract OCR, Pandoc, Graphviz, SQLite, XMLStarlet, zstd/xz/bzip2, and Python libraries for Pillow/OpenCV/OpenPyXL/BeautifulSoup/lxml/YAML
   - web lookup tools: ddgr, w3m, html2text, and Python requests/httpx
@@ -13,9 +14,6 @@ The images are split by toolchain:
   - CSV/data wrangling tools: Miller (`mlr`), csvkit, SQLite, PostgreSQL client tools, and Python pandas/OpenPyXL
   - deep search/extraction tools: ripgrep-all (`rga`), fd, bat, universal-ctags, docx2txt, antiword/catdoc, odt2txt, unrtf, DjVu tools, 7zip, and unrar-free
   - a bundled `container-tools` pi skill documenting installed tools and common extraction/search workflows
-- `localhost/pi-agent:go`, used by `./pod-go`
-  - everything in `base`
-  - Go 1.24 and build-essential
 - `localhost/pi-agent:adk`, used by `./pod-adk`
   - everything in `base`
   - OpenJDK 21, Gradle, Android command line tools, Android SDK platform tools, Android API 35, and Android build-tools 35.0.0
@@ -41,9 +39,8 @@ The container and VS Code server run as the named `pi` user. Podman's `keep-id` 
 
 ```bash
 ./pod-build          # builds localhost/pi-agent:base
-./pod-build go       # builds localhost/pi-agent:go
 ./pod-build adk      # builds localhost/pi-agent:adk
-./pod-build all      # builds all images
+./pod-build all      # builds both images
 ```
 
 You can pass extra `podman build` arguments after the image target, or override the image prefix:
@@ -96,7 +93,7 @@ Run another command in the container environment:
 
 ```bash
 ./pod npm --version
-./pod-go go version
+./pod go version
 ./pod-adk sdkmanager --list
 ```
 
