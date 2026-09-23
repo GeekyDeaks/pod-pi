@@ -22,13 +22,11 @@ The images are split by toolchain:
 
 The default wrapper, `./pod`, runs with:
 
-- a dedicated Podman volume mounted at `${HOME}/.pi` inside the container
-- that volume initialized once from the host `${HOME}/.pi` using `./pod-init`
-- no host `${HOME}/.pi` mount during normal runs, so the container pi environment can diverge from the host pi environment
+- a dedicated `pi-agent-pi` Podman volume mounted at `/home/pi/.pi` inside the container
+- no access to the host's `${HOME}/.pi`; container Pi state starts independently and persists in the volume
+- repository-provided agent assets merged into the volume explicitly with `./pod-init`
 - your current user mapped to the same UID/GID inside the container
 - container root and other privileged IDs mapped through Podman's user namespace instead of to real host root
-
-The volume name defaults to `pi-agent-pi` and can be overridden with `PI_PODMAN_PI_VOLUME`.
 
 ## Build
 
@@ -53,16 +51,17 @@ Tool versions are pinned/configured in `Dockerfile` `ENV` values, including `PI_
 
 ## Run
 
-Initialize the dedicated pi volume from your host `${HOME}/.pi` once, after building the image:
+After building the base image, create the dedicated Pi volume and merge the bundled agent assets into it:
 
 ```bash
 ./pod-init
 ```
 
-Recreate it from the host later if needed. This deletes the existing volume first, so container-side pi state is replaced with a fresh copy of the host `${HOME}/.pi`:
+Run `./pod-init` again after rebuilding to update those assets. Initialization is merge-only: it overwrites matching bundled files but retains other files in `.pi/agent` and preserves all other Pi state. To start completely fresh, remove the volume and initialize it again:
 
 ```bash
-./pod-init --force
+podman volume rm pi-agent-pi
+./pod-init
 ```
 
 Open a shell in the container environment:
@@ -92,16 +91,11 @@ That keeps your current user mapped 1:1 while container root stays in the rootle
 
 ## Mounts
 
-`./pod-init` mounts:
-
-- `${HOME}/.pi -> /mnt/pi-config` as `ro`
-- the Podman volume `${PI_PODMAN_PI_VOLUME:-pi-agent-pi} -> /home/pi/.pi` as `rw`
-
-It copies `${HOME}/.pi` into the volume once. Normal `./pod` runs do not mount the host `${HOME}/.pi`.
+`./pod-init` mounts the `pi-agent-pi` Podman volume at `/home/pi/.pi` and merges the agent assets bundled in the image into `/home/pi/.pi/agent`. It never reads the host's `${HOME}/.pi`.
 
 `./pod` mounts:
 
-- the Podman volume `${PI_PODMAN_PI_VOLUME:-pi-agent-pi} -> /home/pi/.pi` as `rw`
+- the `pi-agent-pi` Podman volume at `/home/pi/.pi` as `rw`
 - `${PWD} -> /work` as the working directory
 - writable tmpfs for `/home/pi` and `/tmp`
 

@@ -11,6 +11,8 @@ ENV NODE_ENV=development \
     NPM_CONFIG_LOGLEVEL=warn \
     NPM_CONFIG_UPDATE_NOTIFIER=false \
     HOME=/home/pi \
+    XDG_CACHE_HOME=/tmp/.cache \
+    TMPDIR=/tmp \
     TERRAFORM_VERSION=1.15.4 \
     RGA_VERSION=0.10.10 \
     LIGHTDASH_CLI_VERSION=latest \
@@ -145,11 +147,9 @@ RUN rm -rf /tmp/* /var/tmp/* \
  && chmod a+rwx /home/pi /work
 
 COPY pi-agent /usr/local/share/pi-agent
-COPY entrypoint.sh /usr/local/bin/pi-entrypoint
-RUN chmod +x /usr/local/bin/pi-entrypoint
 
 WORKDIR /work
-ENTRYPOINT ["tini", "--", "/usr/local/bin/pi-entrypoint"]
+ENTRYPOINT ["tini", "--"]
 CMD ["pi"]
 
 FROM ${GO_IMAGE} AS go-toolchain
