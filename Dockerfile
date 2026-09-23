@@ -157,6 +157,7 @@ RUN rm -rf /tmp/* /var/tmp/* \
  && chown -R pi:pi /go /home/pi /work
 
 COPY pi-agent /usr/local/share/pi-agent
+COPY --chmod=0755 pi-agent-init /usr/local/bin/pi-agent-init
 
 WORKDIR /work
 USER pi

@@ -22,11 +22,7 @@ podman run --rm \
   -e HOME=/home/pi \
   -e PI_SUBAGENTS_VERSION="${PI_SUBAGENTS_VERSION}" \
   -v "${PI_VOLUME}:/home/pi:rw,U,z" \
-  --entrypoint /bin/sh \
   "$IMAGE" \
-  -c 'set -eu
-mkdir -p "$HOME/.pi/agent"
-cp -a --no-preserve=ownership /usr/local/share/pi-agent/. "$HOME/.pi/agent/"
-pi install "npm:@tintinweb/pi-subagents@${PI_SUBAGENTS_VERSION}"'
+  pi-agent-init
 
 echo "initialized podman volume ${PI_VOLUME} (bundled assets and pi-subagents ${PI_SUBAGENTS_VERSION})"

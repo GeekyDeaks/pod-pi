@@ -43,6 +43,14 @@ The container and VS Code server run as the named `pi` user. Podman's `keep-id` 
 ./pod-build all      # builds both images
 ```
 
+From PowerShell on Windows:
+
+```powershell
+.\pod-build.ps1
+.\pod-build.ps1 adk
+.\pod-build.ps1 all
+```
+
 You can pass extra `podman build` arguments after the image target, or override the image prefix:
 
 ```bash
@@ -62,6 +70,14 @@ After building the base image, create the dedicated Pi volume, merge the bundled
 ```bash
 ./pod-init
 ```
+
+From PowerShell on Windows:
+
+```powershell
+.\pod-init.ps1
+```
+
+Both scripts run the same `pi-agent-init` command bundled in the image.
 
 The package version defaults to `0.19.0` and can be overridden when initializing:
 
