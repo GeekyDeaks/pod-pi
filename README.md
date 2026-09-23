@@ -25,7 +25,8 @@ The default wrapper, `./pod`, runs with:
 - a dedicated `pi-agent-pi` Podman volume mounted at `/home/pi/.pi` inside the container
 - no access to the host's `${HOME}/.pi`; container Pi state starts independently and persists in the volume
 - repository-provided agent assets merged into the volume explicitly with `./pod-init`
-- your current user mapped to the same UID/GID inside the container
+- your current user mapped to the image's `pi` user (UID/GID 1000) inside the container
+- files created in the mounted working directory owned by your current user on the host
 - container root and other privileged IDs mapped through Podman's user namespace instead of to real host root
 
 ## Build
@@ -88,12 +89,11 @@ Run a command in the container environment:
 
 ## How the UID mapping works
 
-The wrapper uses:
+The image defines a non-root `pi` user with UID/GID 1000. The wrapper uses:
 
-- `--userns=keep-id`
-- `--user $(id -u):$(id -g)`
+- `--userns=keep-id:uid=1000,gid=1000`
 
-That keeps your current user mapped 1:1 while container root stays in the rootless user namespace backed by subordinate IDs, not host UID 0.
+Podman maps the invoking host user to `pi` inside the container. Files created in the bind-mounted working directory therefore belong to the invoking user on the host, even when the host UID/GID is not 1000. Container root stays in the rootless user namespace backed by subordinate IDs, not host UID 0.
 
 ## Mounts
 

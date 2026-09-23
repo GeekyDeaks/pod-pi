@@ -143,18 +143,22 @@ RUN npm install -g \
  && rm -rf /var/lib/apt/lists/* /home/pi/.npm /tmp/npm-cache
 
 RUN rm -rf /tmp/* /var/tmp/* \
- && mkdir -p /home/pi /work \
- && chmod a+rwx /home/pi /work
+ && groupadd --gid 1000 pi \
+ && useradd --uid 1000 --gid 1000 --create-home --shell /bin/bash pi \
+ && mkdir -p /work \
+ && chown -R pi:pi /home/pi /work
 
 COPY pi-agent /usr/local/share/pi-agent
 
 WORKDIR /work
+USER pi
 ENTRYPOINT ["tini", "--"]
 CMD ["pi"]
 
 FROM ${GO_IMAGE} AS go-toolchain
 
 FROM base AS go
+USER root
 ENV GOPATH=/go \
     GOCACHE=/tmp/go-build \
     PATH=/usr/local/go/bin:${PATH}
@@ -164,9 +168,11 @@ RUN apt-get update \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
  && mkdir -p /go \
- && chmod -R a+rwx /go
+ && chown pi:pi /go
+USER pi
 
 FROM base AS adk
+USER root
 ENV GRADLE_VERSION=8.10.2 \
     GRADLE_HOME=/opt/gradle \
     ANDROID_HOME=/opt/android-sdk \
@@ -190,7 +196,8 @@ RUN apt-get update \
     "platform-tools" \
     "platforms;android-35" \
     "build-tools;35.0.0" \
- && chmod -R a+rwx "${GRADLE_HOME}" "${ANDROID_HOME}" \
+ && chown -R pi:pi "${GRADLE_HOME}" "${ANDROID_HOME}" \
  && rm -rf /tmp/gradle.zip /tmp/android-commandlinetools /tmp/android-commandlinetools.zip
+USER pi
 
 FROM base AS final
