@@ -22,8 +22,8 @@ The images are split by toolchain:
 
 The default wrapper, `./pod`, runs with:
 
-- a dedicated `pi-agent-state` Podman volume mounted at `/home/pi/.pi` inside the container
-- no access to the host's `${HOME}/.pi`; container Pi state starts independently and persists in the volume
+- a dedicated `pi-agent-home` Podman volume mounted at `/home/pi` inside the container
+- no access to the host's home directory; container home and Pi state start independently and persist in the volume
 - repository-provided agent assets merged into the volume explicitly with `./pod-init`
 - your current user mapped to the image's `pi` user (UID/GID 1000) inside the container
 - files created in the mounted working directory owned by your current user on the host
@@ -31,9 +31,9 @@ The default wrapper, `./pod`, runs with:
 
 ## VS Code Dev Container
 
-The repository includes `.devcontainer/devcontainer.json` as a template to copy into a project that should use the Pi development environment. It references the prebuilt `localhost/pi-agent:base` image and the initialized `pi-agent-state` volume, so run `./pod-build` and `./pod-init` from this repository before opening the consuming project in a container.
+The repository includes `.devcontainer/devcontainer.json` as a template to copy into a project that should use the Pi development environment. It references the prebuilt `localhost/pi-agent:base` image and the initialized `pi-agent-home` volume, so run `./pod-build` and `./pod-init` from this repository before opening the consuming project in a container.
 
-Configure the VS Code Dev Containers extension to use Podman, then run **Dev Containers: Reopen in Container** from the consuming project. The project is mounted at `/work`; Pi state is mounted at `/home/pi/.pi`.
+Configure the VS Code Dev Containers extension to use Podman, then run **Dev Containers: Reopen in Container** from the consuming project. The project is mounted at `/work`; the persistent container home is mounted at `/home/pi`.
 
 The container and VS Code server run as the named `pi` user. Podman's `keep-id` user namespace maps the invoking user to UID/GID 1000 inside the container, preserving host ownership of files created in the workspace. `updateRemoteUserUID` is disabled because the namespace performs this mapping without changing the image user.
 
@@ -75,7 +75,7 @@ PI_SUBAGENTS_VERSION=0.19.0 ./pod-init
 Run `./pod-init` again after rebuilding to update the assets and reconcile the package installation. Initialization overwrites matching bundled files but retains other files in `.pi/agent` and preserves all other Pi state. To start completely fresh, remove the volume and initialize it again:
 
 ```bash
-podman volume rm pi-agent-state
+podman volume rm pi-agent-home
 ./pod-init
 ```
 
@@ -105,12 +105,12 @@ Podman maps the invoking host user to `pi` inside the container. Files created i
 
 ## Mounts
 
-`./pod-init` mounts the `pi-agent-state` Podman volume at `/home/pi/.pi` and merges the agent assets bundled in the image into `/home/pi/.pi/agent`. It never reads the host's `${HOME}/.pi`.
+`./pod-init` mounts the `pi-agent-home` Podman volume at `/home/pi` and merges the agent assets bundled in the image into `/home/pi/.pi/agent`. It never reads the host's home directory.
 
 `./pod` mounts:
 
-- the `pi-agent-state` Podman volume at `/home/pi/.pi` as `rw`
+- the `pi-agent-home` Podman volume at `/home/pi` as `rw`
 - `${PWD} -> /work` as the working directory
-- writable tmpfs for `/home/pi` and `/tmp`
+- writable tmpfs for `/tmp`
 
 If `${PWD}/.env` exists, `./pod` also passes it to Podman with `--env-file`. The wrapper still explicitly sets `HOME=/home/pi` after loading the env file, so project `.env` files cannot override the container home directory.
